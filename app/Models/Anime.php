@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Anime extends Model
 {
     use HasFactory;
+    protected $fillable = ['name', 'rating', 'details', 'image', 'description'];
 }
