@@ -24,34 +24,38 @@ import axios from 'axios';
 
 export default function NewDashboard() {
     const [anime, setAnime] = useState([]);
-    const [showAnime, setShowAnime] = useState(false)
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState([]);
 
-    const handleDataFromChild = (data) => {
-        setDataFromChild(data);
-      };
+    const handleOpenModal = (item) => {
+        setSelectedItem(item);
+        setIsModalOpen(true);
+    };
 
-  useEffect(() => {
-    fetchAnime();
-}, []);
+    const closeModal = () => setIsModalOpen(false);
 
-  const fetchAnime = async () => {
+    useEffect(() => {
+        fetchAnime();
+    }, []);
+
+    const fetchAnime = async () => {
     const response = await axios.get('/api/animeApi');
-    setAnime(response.data);
-};
+        setAnime(response.data);
+    };
 
-  return (
+return (
     <div className="bg-white">
       {/* Mobile menu */}
 
       {/* Hero section */}
-      <div className="relative bg-gray-900 w-screen h-screen">
+        <div className="relative bg-gray-900 w-screen h-screen">
         {/* Decorative image and overlay */}
         <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
-          <img
-            alt=""
-            src="http://localhost:8000/images/cover-img.png"
-            className="h-full w-full object-cover object-center"
-          />
+            <img
+                alt=""
+                src="http://localhost:8000/images/cover-img.png"
+                className="h-full w-full object-cover object-center"
+            />
         </div>
         <div aria-hidden="true" className="absolute inset-0 bg-gray-900 opacity-50" />
 
@@ -124,9 +128,21 @@ export default function NewDashboard() {
                                 {anime.description}
                             </h2>
                             </div>
-                            <button onClick={() => setShowAnime(true)} className="px-4 py-3 rounded-lg bg-white text-slate-900 text-sm font-medium">
-                                Show Anime
-                            </button>
+                            <div className='flex space-x-80'>
+                                <button onClick={() => handleOpenModal(anime)} className="px-4 py-3 rounded-lg bg-white text-slate-900 text-sm font-medium">
+                                    Show Anime{anime.id}
+                                </button>
+                                <div className='flex space-x-1 items-center'>
+                                    <img
+                                    alt=""
+                                    src="http://localhost:8000/images/frame.png"
+                                    className="h-5 w-5 object-cover object-center"
+                                    />
+                                    <p className="text-xs font-bold tracking-tight text-white lg:text-xs px-1">{anime.rating}</p>
+                                    <p className="text-xs font-bold tracking-tight text-white lg:text-xs">{anime.details}</p>
+                                </div>
+                                <ShowModal isOpen={isModalOpen} isClose={closeModal} anime={selectedItem.id}/>
+                            </div>
                         </div>
                         </div>
                     </li>
@@ -135,7 +151,6 @@ export default function NewDashboard() {
           </div>
         </section>
       </main>
-      <ShowModal isOpen={showAnime} onSendData={() => handleDataFromChild(false)}    />
     </div>
   )
 }

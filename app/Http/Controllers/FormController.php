@@ -13,9 +13,6 @@ class FormController extends Controller
             'email' => 'required|email|max:255',
         ]);
 
-        // Handle the validated data (e.g., save to database)
-        // ...
-
         return response()->json(['message' => 'Form submitted successfully!']);
     }
 }

@@ -55,9 +55,9 @@ class AnimeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Anime $anime)
+    public function show($anime)
     {
-        return Anime::findOrFail($id);
+        return Anime::findOrFail($anime);
     }
 
     /**

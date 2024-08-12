@@ -48,7 +48,6 @@ const Create = () => {
     };
 
     const handleDelete = async (id) => {
-        console.log(id)
         await axios.delete(`/api/animeApi/${id}`);
         fetchAnime();
     };
