@@ -1,27 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { CheckIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 
 
-export default function ShowModal(isOpen, onSendData) {
-  const [open, setOpen] = useState(false)
-  const handleClick = () => {
-    // console.log('this is triggerd')
-    // // const data = false;
-    // onSendData(false); // Pass data to the parent
+export default function ShowModal({isOpen, isClose, anime}) {
+  const [getAnime, setAnime] = useState([]);
 
-    if (typeof onSendData === 'function') {
-      onSendData(inputValue); // Call the parent's function
-    } else {
-      console.error('onSendData is not a function');
-    }
+  const fetchAnime = async () => {
+    const response = await axios.get(`/api/animeApi/${anime}`);
+    setAnime(response.data);
   };
 
+  useEffect(() => {
+    fetchAnime()
+}, [anime]);
 
   return (
-    <Dialog open={isOpen.isOpen} onClose={setOpen} className="relative z-10">
+    <Dialog open={isOpen} onClose={isClose} className="relative z-10">
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -29,34 +26,70 @@ export default function ShowModal(isOpen, onSendData) {
 
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <DialogPanel
+        <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+            className="flex w-full transform text-left text-base transition data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in md:my-8 md:max-w-2xl md:px-4 data-[closed]:md:translate-y-0 data-[closed]:md:scale-95 lg:max-w-4xl"
           >
-            <div>
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                <CheckIcon aria-hidden="true" className="h-6 w-6 text-green-600" />
-              </div>
-              <div className="mt-3 text-center sm:mt-5">
-                <DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                  Payment successful
-                </DialogTitle>
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="mt-5 sm:mt-6">
+            <div className="relative flex w-full items-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
               <button
                 type="button"
-                // onClick={() => setOpen(false)}
-                onClick={handleClick}
-                className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                onClick={isClose}
+                className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
               >
-                Go back to dashboard
+                <span className="sr-only">Close</span>
+                <XMarkIcon aria-hidden="true" className="h-6 w-6" />
               </button>
+
+              <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:items-center lg:gap-x-8">
+                <div className="aspect-h-3 aspect-w-2 overflow-hidden rounded-lg bg-gray-100 sm:col-span-4 lg:col-span-5">
+                  <img alt={getAnime.name} src={getAnime.image} className="object-cover object-center" />
+                </div>
+                <div className="sm:col-span-8 lg:col-span-7">
+                  <h2 className="text-xl font-medium text-gray-900 sm:pr-12">{getAnime.name}</h2>
+
+                  <section aria-labelledby="information-heading" className="mt-1">
+                    <h3 id="information-heading" className="sr-only">
+                      Product information
+                    </h3>
+
+                    <p className="font-medium text-gray-900">{getAnime.details}</p>
+
+                    {/* Reviews */}
+                    <div className="mt-4">
+                      <h4 className="sr-only">Reviews</h4>
+                      <div className="flex items-center">
+                        <div className="hidden lg:flex lg:items-center">
+                          <span aria-hidden="true" className="text-gray-300">
+                            &middot;
+                          </span>
+                          <div className='flex space-x-1'>
+                            <img
+                              alt=""
+                              src="http://localhost:8000/images/frame.png"
+                              className="h-5 w-5 object-cover object-center"
+                            />
+                            <p className="text-sm text-gray-700">
+                              {getAnime.rating}
+                              <span className="text-sm text-gray-700"> out of 10 stars</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section aria-labelledby="options-heading" className="mt-8">
+                    <form>
+                      {/* Color picker */}
+                      <fieldset aria-label="Choose a color">
+                        <legend className="text-sm font-medium text-gray-900">Descrption</legend>
+                        <p>{getAnime.description}</p>
+                    
+                      </fieldset>
+                    </form>
+                  </section>
+                </div>
+              </div>
             </div>
           </DialogPanel>
         </div>
