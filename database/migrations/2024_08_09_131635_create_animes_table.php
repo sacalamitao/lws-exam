@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('rating');
             $table->string('details');
-            $table->string('image')->nullable();
+            $table->text('image')->nullable();
             $table->text('description');
             $table->timestamps();
         });
